@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: kanboard
+  name: kanboard
+  labels:
+    app: kanboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kanboard
+  template:
+    metadata:
+      labels:
+        app: kanboard
+    spec:
+      containers:
+        - image: kanboard/kanboard
+          name: kanboard
+          volumeMounts:
+            - name: kanboard-config
+              mountPath: /var/www/app/config.php
+              subPath: config.php
+            - name: kanboard-app
+              mountPath: /var/www/app/data
+              subPath: data
+            - name: kanboard-app
+              mountPath: /var/www/app/plugins
+              subPath: plugins
+      volumes:
+        - name: kanboard-app
+          persistentVolumeClaim:
+            claimName: kanboard-volumeclaim
+        - name: kanboard-config
+          configMap:
+            name: kanboard-config
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: kanboard
+  namespace: kanboard
+spec:
+  selector:
+    app: kanboard
+  ports:
+  - protocol: TCP
+    port: 80
+  clusterIP: None
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: kanboard-ingress
+  namespace: kanboard
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: '{{ kanboard_hostname }}'
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: kanboard
+          servicePort: 80

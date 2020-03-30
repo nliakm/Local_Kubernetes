@@ -1,0 +1,17 @@
+ - name: Create monitoring namespace
+  k8s:
+    name: monitoring
+    api_version: v1
+    kind: Namespace
+    state: present
+ 
+ - name: Install prometheus-operator helm chart
+   helm:
+     name: prometheus
+     namespace: monitoring
+     state: present
+     chart:
+       source:
+         type: git
+          location: https://github.com/helm/charts.git
+          path: stable/prometheus-operator

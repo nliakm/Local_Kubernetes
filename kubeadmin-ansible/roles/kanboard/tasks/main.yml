@@ -1,0 +1,9 @@
+- name: Create namespace and PVC
+  k8s:
+    state: present
+    src: namespace-and-pvc.yml
+    
+- name: Create deployment and service
+  k8s:
+    state: present
+    src: deployment-and-service.yml

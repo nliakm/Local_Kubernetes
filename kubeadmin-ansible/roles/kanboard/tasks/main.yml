@@ -8,7 +8,11 @@
   with_items:
     - namespace-and-pvc.yml
     - deployment-and-service.yml
-    - config.php
+    
+- name: Download example config.php    
+  get_url:
+    url: https://raw.githubusercontent.com/kanboard/kanboard/master/config.default.php
+    dest: /tmp/config.php
     
 - name: Create namespace and PVC
   k8s:
@@ -16,7 +20,7 @@
     src: /tmp/namespace-and-pvc.yml
     
 - name: Create configmap for config.php
-  shell: kubectl create configmap -n kanboard kanboard-config --from-file=config.php
+  shell: kubectl create configmap -n kanboard kanboard-config --from-file=/tmp/config.php
   
 - name: Create deployment and service
   k8s:

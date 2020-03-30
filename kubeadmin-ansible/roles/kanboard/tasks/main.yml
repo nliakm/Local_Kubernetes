@@ -1,9 +1,24 @@
+- name: Copy templates to /tmp/
+  template:
+    src: '{{ item }}.j2'
+    dest: '/tmp/{{ item }}'
+    owner: ansible
+    group: ansible
+    mode: '0644'
+  with_items:
+    - namespace-and-pvc.yml
+    - deployment-and-service.yml
+    - config.php
+    
 - name: Create namespace and PVC
   k8s:
     state: present
-    src: namespace-and-pvc.yml
+    src: /tmp/namespace-and-pvc.yml
     
+- name: Create configmap for config.php
+  shell: kubectl create configmap -n kanboard kanboard-config --from-file=config.php
+  
 - name: Create deployment and service
   k8s:
     state: present
-    src: deployment-and-service.yml
+    src: /tmp/deployment-and-service.yml

@@ -6,7 +6,7 @@
     kubernetes_version: '1.18'
     # K8s version if CentOS is used
     kubernetes_version_rhel_package: '1.18.0'
-    kubernetes_enable_web_ui: true
+    kubernetes_enable_web_ui: false
     kubernetes_web_ui_manifest_file: https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-rc7/aio/deploy/recommended.yaml
     
     kubernetes_pod_network:

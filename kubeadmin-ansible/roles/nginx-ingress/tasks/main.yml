@@ -1,0 +1,21 @@
+- name: Create namespace for nginx-ingress
+  k8s:
+    name: nginx-ingress
+    api_version: v1
+    kind: Namespace
+    state: present
+    
+- name: Install nginx helm chart
+  helm:
+     name: nginx-ingress
+     namespace: nginx-ingress
+     state: present
+     chart:
+       source:
+         type: git
+          location: https://github.com/helm/charts.git
+          path: stable/nginx-ingress
+      values:
+        controller.service.type: 'NodePort'
+        controller.service.nodePorts.http: '30080'
+        controller.service.nodePorts.https: '30443'

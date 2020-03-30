@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kanboard
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: kanboard-volumeclaim
+  namespace: kanboard
+spec:
+  storageClassName: '{{ storage_class }}'
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

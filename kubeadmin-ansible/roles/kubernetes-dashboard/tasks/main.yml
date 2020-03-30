@@ -1,0 +1,16 @@
+- name: Download kubernetes-dashboard yaml
+  get_url:
+    url: '{{ dashboard_url }}'
+    dest: /tmp/kubernetes-dashboard.yml
+
+- name: Ensure the Service is type NodePort
+  lineinfile:
+    path: /tmp/kubernetes-dashboard.yml
+    insertafter: 'targetPort: 8443'
+    line: '  type: NodePort'
+    
+- name: Create service account dashboard-admin-sa
+  shell: kubectl create serviceaccount dashboard-admin-sa
+
+- name: Create cluster role bindung for created service account
+  shell: kubectl create clusterrolebinding dashboard-admin-sa --clusterrole=cluster-admin --serviceaccount=default:dashboard-admin-sa

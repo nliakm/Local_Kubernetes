@@ -14,3 +14,17 @@
 
 - name: Create cluster role bindung for created service account
   shell: kubectl create clusterrolebinding dashboard-admin-sa --clusterrole=cluster-admin --serviceaccount=default:dashboard-admin-sa
+
+- name: Copy template to /tmp/
+  template:
+    src: dashboard-ingress.yml.j2
+    dest: /tmp/dashboard-ingress.yml
+    owner: ansible
+    group: ansible
+    mode: '0644'
+          
+- name: Create dashboard ingress
+  k8s:
+    state: present
+    namespace: kubernetes-dashbaord
+    src: /tmp/dashboard-ingress.yml

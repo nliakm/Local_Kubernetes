@@ -6,7 +6,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: {{ dashboard_url }}
+  - host: {{ local_dashboard_url }}
     http:
       paths:
       - path: /

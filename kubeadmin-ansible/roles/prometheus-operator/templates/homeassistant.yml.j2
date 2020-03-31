@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hassbian-prometheus
+  namespace: monitoring
+  labels:
+    app: hassbian-prometheus
+    release: prometheus-operator
+spec:
+  externalName: {{ homeassistant_ip }}
+  ports:
+  - name: metrics
+    port: 9100
+    targetPort: 9100
+    protocol: TCP
+  selector:
+    app: hassbian-prometheus
+    release: prometheus-operator
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: hassbian-prometheus
+  namespace: monitoring
+  labels:
+    app: hassbian-prometheus
+    release: prometheus-operator
+subsets:
+  - addresses:
+      - ip: {{ homeassistant_ip }}
+    ports:
+      - name: metrics
+        port: 9100
+        protocol: TCP
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: hassbian-prometheus
+  # Change this to the namespace the Prometheus instance is running in
+  namespace: monitoring
+  labels:
+    app: hassbian-prometheus
+    release: prometheus-operator
+spec:
+  selector:
+    matchLabels:
+      app: hassbian-prometheus
+      release: prometheus-operator
+  namespaceSelector:
+    matchNames:
+      - monitoring
+  endpoints:
+  - port: metrics
+    scheme: http
+    interval: 60s

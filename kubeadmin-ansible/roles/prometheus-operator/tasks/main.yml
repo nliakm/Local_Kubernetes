@@ -4,6 +4,19 @@
     api_version: v1
     kind: Namespace
     state: present
+    
+- name: Copy templates to /tmp/
+  template:
+    src: '{{ item }}.j2'
+    dest: '/tmp/{{ item }}'
+    owner: ansible
+    group: ansible
+    mode: '0644'
+  with_items:
+    - pihole.yml
+    - homeassistant.yml
+    - prometheus-ingress.yml
+    - grafana-ingress.yml
  
 - name: Install prometheus-operator helm chart
   helm:
@@ -16,23 +29,33 @@
           location: https://github.com/helm/charts.git
           path: stable/prometheus-operator
           
-- name: Copy templates to /tmp/
-  template:
-    src: '{{ item }}.j2'
-    dest: '/tmp/{{ item }}'
-    owner: ansible
-    group: ansible
-    mode: '0644'
-  with_items:
-    - pihole.yml
-    - homeassistant.yml
+- name: Create prometheus ingress
+  k8s:
+    state: present
+    namespace: monitoring
+    src: /tmp/prometheus-ingress.yml
+    
+- name: Create prometheus ingress
+  k8s:
+    state: present
+    namespace: monitoring
+    src: /tmp/grafana-ingress.yml    
+    
+- name: Create grafana ingress
+  k8s:
+    state: present
+    namespace: monitoring
+    src: /tmp/pihole.yml     
+          
     
 - name: Deploy service, endpoint and servicemonitor for pihole
   k8s:
     state: present
+    namespace: monitoring
     src: /tmp/pihole.yml    
     
 - name: Deploy service, endpoint and servicemonitor for homeassistant
   k8s:
     state: present
+    namespace: monitoring
     src: /tmp/homeassistant.yml   

@@ -16,16 +16,23 @@
           location: https://github.com/helm/charts.git
           path: stable/prometheus-operator
           
-- name: Copy pihole template to /tmp/
+- name: Copy templates to /tmp/
   template:
-    src: pihole.yml.j2
-    dest: /tmp/pihole.yml
+    src: '{{ item }}.j2'
+    dest: '/tmp/{{ item }}'
     owner: ansible
     group: ansible
     mode: '0644'
+  with_items:
+    - pihole.yml
+    - homeassistant.yml
     
 - name: Deploy service, endpoint and servicemonitor for pihole
   k8s:
     state: present
     src: /tmp/pihole.yml    
     
+- name: Deploy service, endpoint and servicemonitor for homeassistant
+  k8s:
+    state: present
+    src: /tmp/homeassistant.yml   

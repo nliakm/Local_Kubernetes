@@ -58,7 +58,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: '{{ kanboard_hostname }}'
+  - host: {{ kanboard_hostname }}
     http:
       paths:
       - path: /

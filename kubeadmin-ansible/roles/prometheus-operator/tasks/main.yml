@@ -1,17 +1,31 @@
- - name: Create monitoring namespace
+- name: Create monitoring namespace
   k8s:
     name: monitoring
     api_version: v1
     kind: Namespace
     state: present
  
- - name: Install prometheus-operator helm chart
-   helm:
-     name: prometheus
-     namespace: monitoring
-     state: present
-     chart:
-       source:
-         type: git
+- name: Install prometheus-operator helm chart
+  helm:
+    name: prometheus
+    namespace: monitoring
+    state: present
+    chart:
+      source:
+        type: git
           location: https://github.com/helm/charts.git
           path: stable/prometheus-operator
+          
+- name: Copy pihole template to /tmp/
+  template:
+    src: pihole.yml.j2
+    dest: /tmp/pihole.yml
+    owner: ansible
+    group: ansible
+    mode: '0644'
+    
+- name: Deploy service, endpoint and servicemonitor for pihole
+  k8s:
+    state: present
+    src: /tmp/pihole.yml    
+    

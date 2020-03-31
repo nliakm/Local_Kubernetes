@@ -14,6 +14,18 @@
     url: https://raw.githubusercontent.com/kanboard/kanboard/master/config.default.php
     dest: /tmp/config.php
     
+- name: Ensure plugins are allowed to be installed
+  lineinfile:
+    path: /tmp/config.php
+    regexp: "^define('PLUGIN_INSTALLER'"
+    line: "define('PLUGIN_INSTALLER', true);"
+    
+- name: Ensure URL rewrite is set to false
+  lineinfile:
+    path: /tmp/config.php
+    regexp: "^define('ENABLE_URL_REWRITE'"
+    line: "define('ENABLE_URL_REWRITE', false);"   
+    
 - name: Create namespace and PVC
   k8s:
     state: present

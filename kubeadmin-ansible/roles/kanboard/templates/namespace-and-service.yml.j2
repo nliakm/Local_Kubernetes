@@ -9,7 +9,7 @@ metadata:
   name: kanboard-volumeclaim
   namespace: kanboard
 spec:
-  storageClassName: '{{ storage_class }}'
+  storageClassName: {{ storage_class }}
   accessModes:
     - ReadWriteOnce
   resources:

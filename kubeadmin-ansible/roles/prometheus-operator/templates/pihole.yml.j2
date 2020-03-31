@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pihole-prometheus
+  namespace: monitoring
+  labels:
+    app: pihole-prometheus
+    release: prometheus-operator
+spec:
+  externalName: {{ pihole-ip }}
+  ports:
+  - name: metrics
+    port: 9100
+    targetPort: 9100
+    protocol: TCP
+  selector:
+    app: pihole-prometheus
+    release: prometheus-operator
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: pihole-prometheus
+  namespace: monitoring
+  labels:
+    app: pihole-prometheus
+    release: prometheus-operator
+subsets:
+  - addresses:
+      - ip: {{ pihole_ip }}
+    ports:
+      - name: metrics
+        port: 9100
+        protocol: TCP
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: pihole-prometheus
+  # Change this to the namespace the Prometheus instance is running in
+  namespace: monitoring
+  labels:
+    app: pihole-prometheus
+    release: prometheus-operator
+spec:
+  selector:
+    matchLabels:
+      app: pihole-prometheus
+      release: prometheus-operator
+  namespaceSelector:
+    matchNames:
+      - monitoring
+  endpoints:
+  - port: metrics
+    scheme: http
+    interval: 60s

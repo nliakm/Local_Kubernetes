@@ -15,7 +15,7 @@
          type: git
           location: https://github.com/helm/charts.git
           path: stable/nginx-ingress
-      values:
-        controller.service.type: 'NodePort'
-        controller.service.nodePorts.http: '30080'
-        controller.service.nodePorts.https: '30443'
+       values:
+         controller.service.type: 'NodePort'
+         controller.service.nodePorts.http: '30080'
+         controller.service.nodePorts.https: '30443'

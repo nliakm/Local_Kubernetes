@@ -29,24 +29,14 @@
           location: https://github.com/helm/charts.git
           path: stable/prometheus-operator
           
-- name: Create prometheus ingress
+- name: Create ingresses for prometheus and grafana
   k8s:
     state: present
     namespace: monitoring
-    src: /tmp/prometheus-ingress.yml
-    
-- name: Create prometheus ingress
-  k8s:
-    state: present
-    namespace: monitoring
-    src: /tmp/grafana-ingress.yml    
-    
-- name: Create grafana ingress
-  k8s:
-    state: present
-    namespace: monitoring
-    src: /tmp/pihole.yml     
-          
+    src: "/tmp/{{ item }}"
+  with_items:
+    - prometheus-ingress.yml
+    - grafana-ingress.yml
     
 - name: Deploy service, endpoint and servicemonitor for pihole
   k8s:
